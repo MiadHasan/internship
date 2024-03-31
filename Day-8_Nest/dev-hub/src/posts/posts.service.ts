@@ -9,12 +9,11 @@ export class PostsService {
   constructor(@InjectModel(Posts.name) private postsModel: Model<Posts>) {}
 
   async getPosts(): Promise<Posts[]> {
-    return this.postsModel.find().exec();
+    return await this.postsModel.find().exec();
   }
 
   async createPost(createPostsDto: CreatePostsDto): Promise<Posts> {
-    console.log(createPostsDto);
     const newPost = new this.postsModel(createPostsDto);
-    return newPost.save();
+    return await newPost.save();
   }
 }
