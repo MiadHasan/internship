@@ -8,6 +8,8 @@ import mongoose, { Model } from 'mongoose';
 import { Users } from 'src/schemas/users.schema';
 import { CreateUserDto } from './dto/create-user.dto';
 import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -58,9 +60,11 @@ export class AuthService {
 
   async signUp(createUserDto: CreateUserDto): Promise<Users> {
     const { username, password } = createUserDto;
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(password, salt);
     const user = {
       username,
-      password,
+      password: hashedPassword,
       skills: [],
       experience: 0,
     };
@@ -71,7 +75,7 @@ export class AuthService {
   async signIn(createUserDto: CreateUserDto) {
     const { username, password } = createUserDto;
     const user = await this.usersModel.findOne({ username }).exec();
-    if (user && password === user.password) {
+    if (user && (await bcrypt.compare(password, user.password))) {
       const tokens = await this.getTokens(username, user._id);
       await this.updateRefreshToken(username, tokens.refresh_token);
       return tokens;
