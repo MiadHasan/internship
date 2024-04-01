@@ -5,6 +5,7 @@ import { CommentsModule } from './comments/comments.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
+import { PostCommentModule } from './post-comment/post-comment.module';
 import configuration from './config.schema';
 
 @Module({
@@ -25,6 +26,7 @@ import configuration from './config.schema';
       }),
     }),
     AuthModule,
+    PostCommentModule,
   ],
   controllers: [],
   providers: [],
