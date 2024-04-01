@@ -3,13 +3,13 @@ import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import { Posts } from 'src/schemas/posts.schema';
 import { CreatePostsDto } from './dto/create-posts.dto';
-import { UserPost } from 'src/schemas/user-post.schema';
+import { UserPostService } from 'src/user-post/user-post.service';
 
 @Injectable()
 export class PostsService {
   constructor(
     @InjectModel(Posts.name) private postsModel: Model<Posts>,
-    @InjectModel(UserPost.name) private userPostModel: Model<UserPost>,
+    private userPostService: UserPostService,
   ) {}
 
   async getPosts(): Promise<Posts[]> {
@@ -25,7 +25,7 @@ export class PostsService {
       userId: new mongoose.Types.ObjectId(userId),
       postId: createdPost._id,
     };
-    await this.userPostModel.create(userPost);
+    this.userPostService.createUserPost(userPost);
     return createdPost;
   }
 }
