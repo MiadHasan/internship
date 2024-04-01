@@ -13,6 +13,9 @@ export class Users {
 
   @Prop([String])
   skills: string[];
+
+  @Prop()
+  refreshToken: string;
 }
 
 export const UsersSchema = SchemaFactory.createForClass(Users);
