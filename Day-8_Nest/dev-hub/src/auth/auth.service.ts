@@ -4,7 +4,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { Users } from 'src/schemas/users.schema';
 import { CreateUserDto } from './dto/create-user.dto';
 import { JwtService } from '@nestjs/jwt';
@@ -15,9 +15,10 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async getTokens(username: string) {
+  async getTokens(username: string, userId: mongoose.Types.ObjectId) {
     const jwtPayload = {
       username,
+      userId,
     };
 
     const [at, rt] = await Promise.all([
@@ -46,7 +47,7 @@ export class AuthService {
     if (!user) throw new ForbiddenException('Access Denied!');
     if (refreshToken !== user.refreshToken)
       throw new ForbiddenException('Access Denied!');
-    const tokens = await this.getTokens(username);
+    const tokens = await this.getTokens(username, user._id);
     await this.updateRefreshToken(username, tokens.refresh_token);
     return tokens;
   }
@@ -70,8 +71,8 @@ export class AuthService {
   async signIn(createUserDto: CreateUserDto) {
     const { username, password } = createUserDto;
     const user = await this.usersModel.findOne({ username }).exec();
-    if (username && password === user.password) {
-      const tokens = await this.getTokens(username);
+    if (user && password === user.password) {
+      const tokens = await this.getTokens(username, user._id);
       await this.updateRefreshToken(username, tokens.refresh_token);
       return tokens;
     } else {

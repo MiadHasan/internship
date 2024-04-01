@@ -1,9 +1,9 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostsDto } from './dto/create-posts.dto';
 import { Posts } from 'src/schemas/posts.schema';
 import { AuthGuard } from '@nestjs/passport';
-
+import { Request } from 'express';
 @Controller('posts')
 export class PostsController {
   constructor(private postsService: PostsService) {}
@@ -15,7 +15,10 @@ export class PostsController {
 
   @UseGuards(AuthGuard('jwt'))
   @Post()
-  createPost(@Body() createPostsDto: CreatePostsDto): Promise<Posts> {
-    return this.postsService.createPost(createPostsDto);
+  createPost(
+    @Body() createPostsDto: CreatePostsDto,
+    @Req() req: Request,
+  ): Promise<Posts> {
+    return this.postsService.createPost(createPostsDto, req.user['userId']);
   }
 }
