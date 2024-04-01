@@ -9,12 +9,14 @@ import { Users } from 'src/schemas/users.schema';
 import { CreateUserDto } from './dto/create-user.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectModel(Users.name) private readonly usersModel: Model<Users>,
     private jwtService: JwtService,
+    private configService: ConfigService,
   ) {}
 
   async getTokens(username: string, userId: mongoose.Types.ObjectId) {
@@ -25,11 +27,11 @@ export class AuthService {
 
     const [at, rt] = await Promise.all([
       this.jwtService.signAsync(jwtPayload, {
-        secret: 'access-token-secret',
+        secret: this.configService.get('ACCESS_TOKEN'),
         expiresIn: '15m',
       }),
       this.jwtService.signAsync(jwtPayload, {
-        secret: 'refresh-token-secret',
+        secret: this.configService.get('REFRESH_TOKEN'),
         expiresIn: '7d',
       }),
     ]);
