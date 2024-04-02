@@ -10,6 +10,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
+import { jwtPayload } from 'src/common/interfaces/jwt-payload.interface';
+import { Tokens } from './interfaces/tokens.interface';
 
 @Injectable()
 export class AuthService {
@@ -19,8 +21,11 @@ export class AuthService {
     private configService: ConfigService,
   ) {}
 
-  async getTokens(username: string, userId: mongoose.Types.ObjectId) {
-    const jwtPayload = {
+  async getTokens(
+    username: string,
+    userId: mongoose.Types.ObjectId,
+  ): Promise<Tokens> {
+    const jwtPayload: jwtPayload = {
       username,
       userId,
     };
@@ -35,29 +40,32 @@ export class AuthService {
         expiresIn: '7d',
       }),
     ]);
-
-    return {
-      access_token: at,
-      refresh_token: rt,
+    const tokens: Tokens = {
+      accessToken: at,
+      refreshToken: rt,
     };
-  }
-
-  async updateRefreshToken(username: string, refreshToken: string) {
-    await this.usersModel.findOneAndUpdate({ username }, { refreshToken });
-  }
-
-  async refreshTokens(username: string, refreshToken: string) {
-    const user = await this.usersModel.findOne({ username }).exec();
-    if (!user) throw new ForbiddenException('Access Denied!');
-    if (refreshToken !== user.refreshToken)
-      throw new ForbiddenException('Access Denied!');
-    const tokens = await this.getTokens(username, user._id);
-    await this.updateRefreshToken(username, tokens.refresh_token);
     return tokens;
   }
 
-  async logout(username: string) {
-    await this.updateRefreshToken(username, '');
+  async updateRefreshToken(
+    userId: string | mongoose.Types.ObjectId,
+    refreshToken: string,
+  ) {
+    await this.usersModel.findByIdAndUpdate(userId, { refreshToken });
+  }
+
+  async refreshTokens(userId: string, refreshToken: string): Promise<Tokens> {
+    const user = await this.usersModel.findById(userId);
+    if (!user) throw new ForbiddenException('Access Denied!');
+    if (refreshToken !== user.refreshToken)
+      throw new ForbiddenException('Access Denied!');
+    const tokens = await this.getTokens(user.username, user._id);
+    await this.updateRefreshToken(user._id, tokens.refreshToken);
+    return tokens;
+  }
+
+  async logout(userId: string) {
+    await this.updateRefreshToken(userId, '');
   }
 
   async signUp(createUserDto: CreateUserDto): Promise<Users> {
@@ -74,12 +82,12 @@ export class AuthService {
     return await newUser.save();
   }
 
-  async signIn(createUserDto: CreateUserDto) {
+  async signIn(createUserDto: CreateUserDto): Promise<Tokens> {
     const { username, password } = createUserDto;
     const user = await this.usersModel.findOne({ username }).exec();
     if (user && (await bcrypt.compare(password, user.password))) {
       const tokens = await this.getTokens(username, user._id);
-      await this.updateRefreshToken(username, tokens.refresh_token);
+      await this.updateRefreshToken(user._id, tokens.refreshToken);
       return tokens;
     } else {
       throw new UnauthorizedException('Please check sign in credentials');
