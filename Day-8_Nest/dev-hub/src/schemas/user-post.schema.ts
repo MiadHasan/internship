@@ -5,10 +5,10 @@ import { Posts } from './posts.schema';
 
 @Schema()
 export class UserPost {
-  @Prop({ type: mongoose.Types.ObjectId, ref: 'Users' })
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Users' })
   userId: Users;
 
-  @Prop({ type: mongoose.Types.ObjectId, ref: 'Posts' })
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Posts' })
   postId: Posts;
 }
 

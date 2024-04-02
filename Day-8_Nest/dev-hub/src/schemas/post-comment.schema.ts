@@ -5,10 +5,10 @@ import { Comments } from './comments.schema';
 
 @Schema()
 export class PostComment {
-  @Prop({ type: mongoose.Types.ObjectId, ref: 'Posts' })
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Posts' })
   postId: Posts;
 
-  @Prop({ type: mongoose.Types.ObjectId, ref: 'Comments' })
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Comments' })
   commentId: Comments;
 }
 
