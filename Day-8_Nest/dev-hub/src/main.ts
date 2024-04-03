@@ -6,7 +6,7 @@ import { AccessTokenGuard } from './common/guards/access-token.guard';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe());
-  app.useGlobalGuards(new AccessTokenGuard());
+  //app.useGlobalGuards(new AccessTokenGuard());
   await app.listen(3000);
 }
 bootstrap();

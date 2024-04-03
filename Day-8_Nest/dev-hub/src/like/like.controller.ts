@@ -3,6 +3,7 @@ import { LikeService } from './like.service';
 import { CreateLikeDto } from './dto/create-like.dto';
 import { GetCurrentUserId } from 'src/common/decorators/get-user-id.decorator';
 import { AccessTokenGuard } from 'src/common/guards/access-token.guard';
+import { LikeOrDislikeCountQueryDto } from './dto/like-count-query.dto';
 
 @Controller('like')
 export class LikeController {
@@ -17,9 +18,10 @@ export class LikeController {
     return this.likeService.likePost(userId, createLikeDto);
   }
 
-  //@UseGuards(AccessTokenGuard)
-  @Get()
-  likeCount(@Query('postId') postId: string): Promise<number> {
-    return this.likeService.likeCount(postId);
+  @Get('post')
+  likeOrDislikeCount(
+    @Query() likeOrDislikeCountQueryDto: LikeOrDislikeCountQueryDto,
+  ): Promise<number> {
+    return this.likeService.likeOrDislikeCount(likeOrDislikeCountQueryDto);
   }
 }
