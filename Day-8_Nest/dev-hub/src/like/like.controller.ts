@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { LikeService } from './like.service';
 import { CreateLikeDto } from './dto/create-like.dto';
 import { GetCurrentUserId } from 'src/common/decorators/get-user-id.decorator';
@@ -9,7 +9,6 @@ import { LikeOrDislikeCountQueryDto } from './dto/like-count-query.dto';
 export class LikeController {
   constructor(private likeService: LikeService) {}
 
-  @UseGuards(AccessTokenGuard)
   @Post('post')
   likePost(
     @Body() createLikeDto: CreateLikeDto,

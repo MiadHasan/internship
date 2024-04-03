@@ -9,6 +9,8 @@ import { PostCommentModule } from './post-comment/post-comment.module';
 import { UserPostModule } from './user-post/user-post.module';
 import { LikeModule } from './like/like.module';
 import configuration from './config.schema';
+import { APP_GUARD } from '@nestjs/core';
+import { AccessTokenGuard } from './common/guards/access-token.guard';
 
 @Module({
   imports: [
@@ -33,6 +35,11 @@ import configuration from './config.schema';
     LikeModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: AccessTokenGuard,
+    },
+  ],
 })
 export class AppModule {}

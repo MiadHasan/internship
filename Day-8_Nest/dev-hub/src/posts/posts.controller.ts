@@ -1,8 +1,7 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostsDto } from './dto/create-posts.dto';
 import { Posts } from 'src/schemas/posts.schema';
-import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 @Controller('posts')
 export class PostsController {
@@ -13,7 +12,6 @@ export class PostsController {
     return this.postsService.getPosts();
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Post()
   createPost(
     @Body() createPostsDto: CreatePostsDto,
