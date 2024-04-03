@@ -8,7 +8,7 @@ export class CommentsController {
   constructor(private commentsService: CommentsService) {}
 
   @Get()
-  getComments(@Query('postId') postId: string): Promise<void> {
+  getComments(@Query('postId') postId: string): Promise<Comments[]> {
     return this.commentsService.getComments(postId);
   }
 
