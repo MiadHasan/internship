@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { CreateCommentsDto } from './dto/create-comments.dto';
 import { Comments } from 'src/schemas/comments.schema';
@@ -8,8 +8,8 @@ export class CommentsController {
   constructor(private commentsService: CommentsService) {}
 
   @Get()
-  getComments(): Promise<Comments[]> {
-    return this.commentsService.getComments();
+  getComments(@Query('postId') postId: string): Promise<Comments[]> {
+    return this.commentsService.getComments(postId);
   }
 
   @Post()

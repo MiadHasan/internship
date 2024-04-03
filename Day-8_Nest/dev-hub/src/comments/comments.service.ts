@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Comments } from 'src/schemas/comments.schema';
 import { CreateCommentsDto } from './dto/create-comments.dto';
 
@@ -10,7 +10,11 @@ export class CommentsService {
     @InjectModel(Comments.name) private commentsModel: Model<Comments>,
   ) {}
 
-  async getComments(): Promise<Comments[]> {
+  async getComments(postId: string): Promise<Comments[]> {
+    if (!Types.ObjectId.isValid(postId)) {
+      throw new NotFoundException('No post!');
+    }
+    //const postComments =
     return await this.commentsModel.find();
   }
 
