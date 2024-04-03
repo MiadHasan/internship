@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { LikeService } from './like.service';
 import { CreateLikeDto } from './dto/create-like.dto';
 import { GetCurrentUserId } from 'src/common/decorators/get-user-id.decorator';
@@ -13,7 +13,13 @@ export class LikeController {
   likePost(
     @Body() createLikeDto: CreateLikeDto,
     @GetCurrentUserId() userId: string,
-  ) {
+  ): Promise<void> {
     return this.likeService.likePost(userId, createLikeDto);
+  }
+
+  //@UseGuards(AccessTokenGuard)
+  @Get()
+  likeCount(@Query('postId') postId: string): Promise<number> {
+    return this.likeService.likeCount(postId);
   }
 }
