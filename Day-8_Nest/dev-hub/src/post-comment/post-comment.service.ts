@@ -13,4 +13,10 @@ export class PostCommentService {
   async createPostComment(postCommentDto: PostCommentDto) {
     await this.postCommentModel.create(postCommentDto);
   }
+
+  async getComments(postId: string): Promise<PostComment[]> {
+    const comments = await this.postCommentModel.find({ postId: postId });
+    console.log(comments);
+    return comments;
+  }
 }

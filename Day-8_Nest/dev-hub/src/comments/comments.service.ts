@@ -12,12 +12,12 @@ export class CommentsService {
     private postCommentService: PostCommentService,
   ) {}
 
-  async getComments(postId: string): Promise<Comments[]> {
+  async getComments(postId: string) {
     if (!Types.ObjectId.isValid(postId)) {
       throw new NotFoundException('No post!');
     }
-    //const postComments =
-    return await this.commentsModel.find();
+    const postComments = await this.postCommentService.getComments(postId);
+    postComments?.map((item) => console.log(item.commentId));
   }
 
   async createComment(
