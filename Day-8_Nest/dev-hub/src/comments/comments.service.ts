@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model, Types } from 'mongoose';
-import { Comments } from 'src/schemas/comments.schema';
+import { Comments } from '../schemas/comments.schema';
 import { CreateCommentsDto } from './dto/create-comments.dto';
-import { PostCommentService } from 'src/post-comment/post-comment.service';
+import { PostCommentService } from '../post-comment/post-comment.service';
 
 @Injectable()
 export class CommentsService {
