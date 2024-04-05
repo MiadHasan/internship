@@ -11,7 +11,7 @@ describe('CommentsService', () => {
   const mockCommentsRepository = {
     create: jest
       .fn()
-      .mockImplementation((createCommentsDto) =>
+      .mockImplementationOnce((createCommentsDto) =>
         Promise.resolve({ comment: createCommentsDto.comment, _id: '123' }),
       ),
   };
@@ -31,6 +31,7 @@ describe('CommentsService', () => {
     commentsService = module.get<CommentsService>(CommentsService);
     postCommentService = module.get<PostCommentService>(PostCommentService);
   });
+
   const expectedResult = {
     comment: 'hello',
     _id: '123',

@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { dynamoDBClient } from 'src/aws-config/dynamoDBClient';
 import * as AWS from 'aws-sdk';
+import { v4 as uuid } from 'uuid';
+import { CreateBookDto } from './dto/create-book.dto';
+
 @Injectable()
 export class DynamoService {
   private dynamodb: AWS.DynamoDB;
@@ -48,19 +51,21 @@ export class DynamoService {
     }
   }
 
-  async create() {
-    await this.createTable('Books');
-    return await dynamoDBClient()
+  async createBook(createBookDto: CreateBookDto) {
+    //await this.createTable('Books');
+    return dynamoDBClient()
       .put({
         TableName: 'Books',
         Item: {
-          id: '123',
+          id: uuid(),
+          title: createBookDto.title,
+          author: createBookDto.author,
         },
       })
       .promise();
   }
 
-  async findAll() {
+  async getBooks() {
     const results = await dynamoDBClient()
       .scan({
         TableName: 'Books',
@@ -68,5 +73,15 @@ export class DynamoService {
       .promise();
 
     return results.Items;
+  }
+
+  async deleteBook(bookId: string) {
+    console.log(bookId);
+    return await dynamoDBClient()
+      .delete({
+        TableName: 'Books',
+        Key: { id: bookId },
+      })
+      .promise();
   }
 }

@@ -1,6 +1,7 @@
-import { Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, Query } from '@nestjs/common';
 import { DynamoService } from './dynamo.service';
 import { Public } from 'src/common/decorators/public.decorator';
+import { CreateBookDto } from './dto/create-book.dto';
 
 @Controller('dynamo')
 export class DynamoController {
@@ -8,13 +9,20 @@ export class DynamoController {
 
   @Public()
   @Post()
-  create() {
-    return this.dynamoService.create();
+  createBook(@Body() createBookDto: CreateBookDto) {
+    return this.dynamoService.createBook(createBookDto);
   }
 
   @Public()
   @Get()
-  findAll() {
-    return this.dynamoService.findAll();
+  getBooks() {
+    return this.dynamoService.getBooks();
+  }
+
+  @Public()
+  @Delete()
+  deleteBook(@Query('id') id: string) {
+    console.log(id, 'controller');
+    return this.deleteBook(id);
   }
 }
