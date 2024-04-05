@@ -1,15 +1,27 @@
 import { Test } from '@nestjs/testing';
 import { CommentsService } from './comments.service';
 import { PostCommentService } from '../post-comment/post-comment.service';
+import { getModelToken } from '@nestjs/mongoose';
+import { Comments } from '../schemas/comments.schema';
 
 describe('CommentsService', () => {
   let commentsService: CommentsService;
 
   const mockCommentsRepository = {
-    createComment: jest.fn((createCommentsDto) => ({
-      ...createCommentsDto,
-      _id: '123',
-    })),
+    create: jest.fn().mockImplementation((createCommentsDto) =>
+      Promise.resolve({
+        comment: createCommentsDto.comment,
+        _id: '66088e106d65d2f9897de46b',
+      }),
+    ),
+  };
+
+  const mockPostCommentService = {
+    createPostComment: jest
+      .fn()
+      .mockImplementation((postComment) =>
+        Promise.resolve({ ...postComment, _id: '66088e106d65d2f9897de46b' }),
+      ),
   };
 
   beforeEach(async () => {
@@ -17,11 +29,14 @@ describe('CommentsService', () => {
       providers: [
         CommentsService,
         {
-          provide: CommentsService,
+          provide: getModelToken(Comments.name),
           useValue: mockCommentsRepository,
         },
         PostCommentService,
-        { provide: PostCommentService, useValue: {} },
+        {
+          provide: PostCommentService,
+          useValue: mockPostCommentService,
+        },
       ],
     }).compile();
 
@@ -29,13 +44,16 @@ describe('CommentsService', () => {
   });
   const expectedResult = {
     comment: 'hello',
-    _id: '123',
+    _id: '66088e106d65d2f9897de46b',
   };
   it('should create a comment', async () => {
     const result = await commentsService.createComment(
       { comment: 'hello' },
-      '123',
+      '66088e106d65d2f9897de46b',
     );
+    // jest
+    //   .spyOn(postCommentService, 'createPostComment')
+    //   .mockImplementation(() => Promise.resolve());
     expect(result).toEqual(expectedResult);
   });
 });

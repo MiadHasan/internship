@@ -14,7 +14,7 @@ export class CommentsService {
 
   async getComments(postId: string): Promise<Comments[]> {
     if (!Types.ObjectId.isValid(postId)) {
-      throw new NotFoundException('No post!');
+      throw new NotFoundException('No post with this id!');
     }
     const postComments = await this.postCommentService.getComments(postId);
     const commentIds = postComments?.map((item) => item.commentId);
