@@ -11,6 +11,7 @@ import { LikeModule } from './like/like.module';
 import configuration from './config.schema';
 import { APP_GUARD } from '@nestjs/core';
 import { AccessTokenGuard } from './common/guards/access-token.guard';
+import { DynamoModule } from './dynamo/dynamo.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { AccessTokenGuard } from './common/guards/access-token.guard';
     PostCommentModule,
     UserPostModule,
     LikeModule,
+    DynamoModule,
   ],
   controllers: [],
   providers: [

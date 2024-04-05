@@ -1,15 +1,19 @@
 import { Test } from '@nestjs/testing';
 import { CommentsService } from './comments.service';
 import { PostCommentService } from '../post-comment/post-comment.service';
+import { getModelToken } from '@nestjs/mongoose';
+import { Comments } from 'src/schemas/comments.schema';
 
 describe('CommentsService', () => {
   let commentsService: CommentsService;
+  let postCommentService: PostCommentService;
 
   const mockCommentsRepository = {
-    createComment: jest.fn((createCommentsDto) => ({
-      ...createCommentsDto,
-      _id: '123',
-    })),
+    create: jest
+      .fn()
+      .mockImplementation((createCommentsDto) =>
+        Promise.resolve({ comment: createCommentsDto.comment, _id: '123' }),
+      ),
   };
 
   beforeEach(async () => {
@@ -17,15 +21,15 @@ describe('CommentsService', () => {
       providers: [
         CommentsService,
         {
-          provide: CommentsService,
+          provide: getModelToken(Comments.name),
           useValue: mockCommentsRepository,
         },
         PostCommentService,
-        { provide: PostCommentService, useValue: {} },
       ],
     }).compile();
 
     commentsService = module.get<CommentsService>(CommentsService);
+    postCommentService = module.get<PostCommentService>(PostCommentService);
   });
   const expectedResult = {
     comment: 'hello',
@@ -36,6 +40,9 @@ describe('CommentsService', () => {
       { comment: 'hello' },
       '123',
     );
+    jest
+      .spyOn(postCommentService, 'createPostComment')
+      .mockImplementation(() => Promise.resolve());
     expect(result).toEqual(expectedResult);
   });
 });
