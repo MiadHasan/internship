@@ -1,4 +1,4 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Get, Post } from '@nestjs/common';
 import { DynamoService } from './dynamo.service';
 import { Public } from 'src/common/decorators/public.decorator';
 
@@ -10,5 +10,11 @@ export class DynamoController {
   @Post()
   create() {
     return this.dynamoService.create();
+  }
+
+  @Public()
+  @Get()
+  findAll() {
+    return this.dynamoService.findAll();
   }
 }
