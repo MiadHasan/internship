@@ -1,9 +1,14 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model, Types } from 'mongoose';
 import { Comments } from '../schemas/comments.schema';
 import { CreateCommentsDto } from './dto/create-comments.dto';
 import { PostCommentService } from '../post-comment/post-comment.service';
+import { CommentInterface } from './interfaces/comment.interface';
 
 @Injectable()
 export class CommentsService {
@@ -12,9 +17,9 @@ export class CommentsService {
     private postCommentService: PostCommentService,
   ) {}
 
-  async getComments(postId: string): Promise<Comments[]> {
+  async getComments(postId: string): Promise<CommentInterface[]> {
     if (!Types.ObjectId.isValid(postId)) {
-      throw new NotFoundException('No post with this id!');
+      throw new BadRequestException('Invalid Post ID!');
     }
     const postComments = await this.postCommentService.getComments(postId);
     const commentIds = postComments?.map((item) => item.commentId);
@@ -24,8 +29,9 @@ export class CommentsService {
   async createComment(
     createCommentsDto: CreateCommentsDto,
     postId: string,
-  ): Promise<Comments> {
-    const newComment = await this.commentsModel.create(createCommentsDto);
+  ): Promise<CommentInterface> {
+    const newComment: CommentInterface =
+      await this.commentsModel.create(createCommentsDto);
     const postComment = {
       postId: new mongoose.Types.ObjectId(postId),
       commentId: newComment._id,

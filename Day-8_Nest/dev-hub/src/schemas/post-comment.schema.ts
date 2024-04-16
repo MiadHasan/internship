@@ -6,10 +6,10 @@ import { Comments } from './comments.schema';
 @Schema()
 export class PostComment {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Posts' })
-  postId: Posts;
+  postId: mongoose.Schema.Types.ObjectId;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Comments' })
-  commentId: Comments;
+  commentId: mongoose.Schema.Types.ObjectId;
 }
 
 export const PostCommentSchema = SchemaFactory.createForClass(PostComment);
