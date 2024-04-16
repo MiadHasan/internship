@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
-import { Users } from 'src/schemas/users.schema';
+import { Users } from '../schemas/users.schema';
 import { CreateUserDto } from './dto/create-user.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
@@ -51,7 +51,7 @@ export class AuthService {
     userId: string | mongoose.Types.ObjectId,
     refreshToken: string,
   ) {
-    await this.usersModel.findByIdAndUpdate(userId, { refreshToken });
+    return await this.usersModel.findByIdAndUpdate(userId, { refreshToken });
   }
 
   async refreshTokens(userId: string, refreshToken: string): Promise<Tokens> {
@@ -65,7 +65,7 @@ export class AuthService {
   }
 
   async logout(userId: string) {
-    await this.updateRefreshToken(userId, '');
+    return await this.updateRefreshToken(userId, '');
   }
 
   async signUp(createUserDto: CreateUserDto): Promise<Users> {
@@ -78,13 +78,12 @@ export class AuthService {
       skills: [],
       experience: 0,
     };
-    const newUser = new this.usersModel(user);
-    return await newUser.save();
+    return await this.usersModel.create(user);
   }
 
   async signIn(createUserDto: CreateUserDto): Promise<Tokens> {
     const { username, password } = createUserDto;
-    const user = await this.usersModel.findOne({ username }).exec();
+    const user = await this.usersModel.findOne({ username });
     if (user && (await bcrypt.compare(password, user.password))) {
       const tokens = await this.getTokens(username, user._id);
       await this.updateRefreshToken(user._id, tokens.refreshToken);

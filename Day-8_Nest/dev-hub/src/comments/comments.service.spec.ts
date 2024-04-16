@@ -3,7 +3,7 @@ import { CommentsService } from './comments.service';
 import { PostCommentService } from '../post-comment/post-comment.service';
 import { getModelToken } from '@nestjs/mongoose';
 import { Comments } from '../schemas/comments.schema';
-import mongoose, { Document, Model, Types } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { CreateCommentsDto } from './dto/create-comments.dto';
 import { PostComment } from 'src/schemas/post-comment.schema';
 
@@ -29,7 +29,6 @@ describe('CommentsService', () => {
           provide: getModelToken(Comments.name),
           useValue: mockCommentsRepository,
         },
-        PostCommentService,
         {
           provide: PostCommentService,
           useValue: mockPostCommentService,
