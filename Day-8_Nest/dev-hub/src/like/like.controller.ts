@@ -4,6 +4,7 @@ import { CreateLikeDto } from './dto/create-like.dto';
 import { GetCurrentUserId } from 'src/common/decorators/get-user-id.decorator';
 import { AccessTokenGuard } from 'src/common/guards/access-token.guard';
 import { LikeOrDislikeCountQueryDto } from './dto/like-count-query.dto';
+import { Like } from 'src/schemas/like.schema';
 
 @Controller('like')
 export class LikeController {
@@ -13,7 +14,7 @@ export class LikeController {
   likePost(
     @Body() createLikeDto: CreateLikeDto,
     @GetCurrentUserId() userId: string,
-  ): Promise<void> {
+  ): Promise<Like> {
     return this.likeService.likePost(userId, createLikeDto);
   }
 

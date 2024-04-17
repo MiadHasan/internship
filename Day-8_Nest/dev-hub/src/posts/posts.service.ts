@@ -13,7 +13,7 @@ export class PostsService {
   ) {}
 
   async getPosts(): Promise<Posts[]> {
-    return await this.postsModel.find().exec();
+    return await this.postsModel.find().lean();
   }
 
   async createPost(

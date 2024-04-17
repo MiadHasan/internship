@@ -34,7 +34,7 @@ export class AuthController {
 
   @Post('logout')
   @HttpCode(HttpStatus.OK)
-  logout(@GetCurrentUserId() userId: string): Promise<void> {
+  logout(@GetCurrentUserId() userId: string) {
     return this.authService.logout(userId);
   }
 

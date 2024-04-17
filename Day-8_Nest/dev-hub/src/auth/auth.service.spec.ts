@@ -8,7 +8,11 @@ import { getModelToken } from '@nestjs/mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
 import { Mock } from 'node:test';
-import { BadRequestException, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 
 describe('AuthService', () => {
@@ -29,6 +33,7 @@ describe('AuthService', () => {
     findOne: jest.fn(),
     findByIdAndUpdate: jest.fn(),
     create: jest.fn(),
+    findById: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -107,12 +112,11 @@ describe('AuthService', () => {
     });
 
     it('should throw unauthorized exception', async () => {
-      mockUser = undefined;
       mockFunctionsForSignIn(
         jwtService,
         configService,
         usersModel,
-        mockUser,
+        undefined,
         true,
       );
       await expect(
@@ -152,6 +156,31 @@ describe('AuthService', () => {
         .mockResolvedValueOnce(mockUser);
       const result = await authService.logout(mockUserId);
       expect(result).toEqual(mockUser);
+    });
+  });
+
+  describe('refreshTokens', () => {
+    it('should set a new refresh token', async () => {
+      jest.spyOn(usersModel, 'findById').mockResolvedValueOnce(mockUser);
+      const result = await authService.refreshTokens(
+        mockUserId,
+        'refresh_token',
+      );
+      expect(result).toEqual(mockTokens);
+    });
+
+    it('should throw forbidden exception', async () => {
+      jest.spyOn(usersModel, 'findById').mockResolvedValueOnce(undefined);
+      await expect(
+        authService.refreshTokens(mockUserId, 'refresh_token'),
+      ).rejects.toThrow(ForbiddenException);
+    });
+
+    it('should throw forbidden exception', async () => {
+      jest.spyOn(usersModel, 'findById').mockResolvedValueOnce(mockUser);
+      await expect(
+        authService.refreshTokens(mockUserId, 'invalid'),
+      ).rejects.toThrow(ForbiddenException);
     });
   });
 });

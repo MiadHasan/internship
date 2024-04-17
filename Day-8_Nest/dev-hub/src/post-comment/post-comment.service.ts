@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { PostComment } from '../schemas/post-comment.schema';
@@ -12,7 +12,7 @@ export class PostCommentService {
   ) {}
 
   async createPostComment(postCommentDto: PostCommentDto) {
-    await this.postCommentModel.create(postCommentDto);
+    return await this.postCommentModel.create(postCommentDto);
   }
 
   // async getComments(postId: string): Promise<{ comment: string }[]> {
@@ -36,6 +36,8 @@ export class PostCommentService {
   // }
 
   async getComments(postId: string): Promise<PostComment[]> {
+    if (!Types.ObjectId.isValid(postId))
+      throw new ForbiddenException('invalid post id!');
     return await this.postCommentModel.find({
       postId: new Types.ObjectId(postId),
     });
