@@ -1,7 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { Like } from 'src/schemas/like.schema';
+import { Like } from '../schemas/like.schema';
 import { CreateLikeDto } from './dto/create-like.dto';
 import { LikeStatus } from './enums/like-status.enum';
 import { LikeOrDislikeCountQueryDto } from './dto/like-count-query.dto';
@@ -13,15 +17,17 @@ export class LikeService {
   //creating a doc associated with like or dislike
   async likePost(userId: string, createLikeDto: CreateLikeDto) {
     if (!Types.ObjectId.isValid(createLikeDto.postId)) {
-      throw new NotFoundException('Not a valid post id!');
+      throw new ForbiddenException('Invalid post id!');
+    }
+    if (!Types.ObjectId.isValid(userId)) {
+      throw new ForbiddenException('Invalid user id!');
     }
     const likeObj = {
       userId,
       postId: createLikeDto.postId,
       action: createLikeDto.action,
     };
-    const newLikeDoc = new this.likeModel(likeObj);
-    await newLikeDoc.save();
+    return await this.likeModel.create(likeObj);
   }
 
   //return the like or dislike count for a specific post
@@ -29,7 +35,7 @@ export class LikeService {
     likeOrDislikeCountQueryDto: LikeOrDislikeCountQueryDto,
   ): Promise<number | undefined> {
     if (!Types.ObjectId.isValid(likeOrDislikeCountQueryDto.postId)) {
-      throw new NotFoundException('Not a valid post id!');
+      throw new ForbiddenException('Invalid post id!');
     }
     likeOrDislikeCountQueryDto.action =
       likeOrDislikeCountQueryDto.action ?? LikeStatus.LIKE;
