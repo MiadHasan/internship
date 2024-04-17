@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
-import { Posts } from 'src/schemas/posts.schema';
+import { Posts } from '../schemas/posts.schema';
 import { CreatePostsDto } from './dto/create-posts.dto';
-import { UserPostService } from 'src/user-post/user-post.service';
+import { UserPostService } from '../user-post/user-post.service';
 
 @Injectable()
 export class PostsService {

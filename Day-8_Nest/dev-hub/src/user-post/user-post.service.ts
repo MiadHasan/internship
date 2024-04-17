@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { UserPost } from 'src/schemas/user-post.schema';
+import { UserPost } from '../schemas/user-post.schema';
 import { UserPostDto } from './dto/user-post.dto';
 
 @Injectable()
@@ -11,6 +11,6 @@ export class UserPostService {
   ) {}
 
   async createUserPost(userPostDto: UserPostDto) {
-    await this.userPostModel.create(userPostDto);
+    return await this.userPostModel.create(userPostDto);
   }
 }
