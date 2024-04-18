@@ -16,6 +16,7 @@ describe('likeService', () => {
   const mockLikeRepository = {
     create: jest.fn(),
     aggregate: jest.fn(),
+    findByIdAndDelete: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -113,6 +114,16 @@ describe('likeService', () => {
         postId: '66088e106d65d2f9897de46b',
       } as LikeOrDislikeCountQueryDto);
       expect(result).toEqual(10);
+    });
+  });
+
+  describe('deleteLike', () => {
+    it('should delete like', async () => {
+      jest
+        .spyOn(likeModel, 'findByIdAndDelete')
+        .mockResolvedValueOnce(mockLikeObj);
+      const result = await likeService.deleteLike('66088e106d65d2f9897de46b');
+      expect(result).toEqual(mockLikeObj);
     });
   });
 });
