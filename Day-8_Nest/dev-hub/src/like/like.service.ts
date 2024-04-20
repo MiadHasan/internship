@@ -46,4 +46,6 @@ export class LikeService {
     console.log(count);
     return count.length > 0 ? count[0]?.like : 0;
   }
+
+  async getUsers() {}
 }

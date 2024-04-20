@@ -33,4 +33,10 @@ export class CommentsService {
     await this.postCommentService.createPostComment(postComment);
     return newComment;
   }
+
+  async updateComment() {}
+
+  async deleteComment() {}
+
+  async getCommentById() {}
 }

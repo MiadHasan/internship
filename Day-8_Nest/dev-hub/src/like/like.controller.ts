@@ -2,7 +2,6 @@ import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { LikeService } from './like.service';
 import { CreateLikeDto } from './dto/create-like.dto';
 import { GetCurrentUserId } from 'src/common/decorators/get-user-id.decorator';
-import { AccessTokenGuard } from 'src/common/guards/access-token.guard';
 import { LikeOrDislikeCountQueryDto } from './dto/like-count-query.dto';
 
 @Controller('like')
@@ -17,7 +16,7 @@ export class LikeController {
     return this.likeService.likePost(userId, createLikeDto);
   }
 
-  @Get('post')
+  @Get(':postId/count')
   likeOrDislikeCount(
     @Query() likeOrDislikeCountQueryDto: LikeOrDislikeCountQueryDto,
   ): Promise<number> {
